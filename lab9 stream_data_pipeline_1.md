@@ -19,7 +19,7 @@ os.chdir(home_directory+'/Documents/projects/ee3801')
 
     ```$ cd ~/Documents/projects/ee3801```\
     ```$ ssh -i "MyKeyPair.pem" ec2-user@<ip_address>```\
-    ```$ mkdir -p ~/dev_kafka/data```\
+    ```$ mkdir -p ./dev_kafka/data```\
     ```$ cd ~/dev_kafka```
 
 2. Download <a href="https://github.com/apache/kafka/tree/trunk/docker/examples/docker-compose-files/cluster/isolated/plaintext">docker-compose.yml</a> and save in the ```dev_kafka``` folder. 
