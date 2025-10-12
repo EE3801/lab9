@@ -28,7 +28,7 @@ os.chdir(home_directory+'/Documents/projects/ee3801')
 
 3. Open the docker-compose.yml and observe that there are 3 kafka broker with 3 isolated controllers. 
 
-    ```sudo vi docker-compose.yml```
+    ```vi docker-compose.yml```
 
 4. Replace the localhost to ```${PUBLIC_IP_ADDRESS}``` in the docker-compose.yml file and save the file.
 
