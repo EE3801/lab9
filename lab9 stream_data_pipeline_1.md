@@ -223,7 +223,7 @@ The company would like to build an in-house automatic speech transcribing tool. 
 
 Given the script below. You can read out the script as you are recording the audio.
 
-```
+```markdown
 Producers are fairly straightforward – they send messages to a topic and partition, maybe request an acknowledgment, retry if a message fails – or not – and continue. Consumers, however, can be a little more complicated.
 
 Consumers read messages from a topic. Consumers run in a poll loop that runs indefinitely waiting for messages. Consumers can read from the beginning – they will start at the first message in the topic and read the entire history. Once caught up, the consumer will wait for new messages.
