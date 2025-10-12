@@ -33,11 +33,11 @@ os.chdir(home_directory+'/Documents/projects/ee3801')
 4. Replace the localhost to ```${PUBLIC_IP_ADDRESS}``` in the docker-compose.yml file and save the file.
 5. Download docker-compose.
 
-    ```$ sudo curl -L "https://github.com/docker/compose/releases/download/v2.27.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose```
+    ```curl -L "https://github.com/docker/compose/releases/download/v2.27.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose```
 
     Make it executable.
 
-    ```$ sudo chmod +x /usr/local/bin/docker-compose```
+    ```chmod +x /usr/local/bin/docker-compose```
 
     Verify.
 
