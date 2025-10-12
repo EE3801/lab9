@@ -31,19 +31,8 @@ os.chdir(home_directory+'/Documents/projects/ee3801')
     ```vi docker-compose.yml```
 
 4. Replace the localhost to ```${PUBLIC_IP_ADDRESS}``` in the docker-compose.yml file and save the file.
-5. Download docker-compose.
 
-    ```curl -L "https://github.com/docker/compose/releases/download/v2.27.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose```
-
-    Make it executable.
-
-    ```chmod +x /usr/local/bin/docker-compose```
-
-    Verify.
-
-    ```$ docker-compose --version```
-
-6. Run the docker command in command line or terminal. Ctrl-C to terminate in the terminal and start the dev_kafka docker containers (controllers first) in docker dashboard. 
+5. Run the docker command in command line or terminal. Ctrl-C to terminate in the terminal and start the dev_kafka docker containers (controllers first) in docker dashboard. 
 
     ```IMAGE=apache/kafka:latest PUBLIC_IP_ADDRESS=<ip_address> docker-compose up```
 
