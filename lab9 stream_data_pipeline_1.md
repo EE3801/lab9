@@ -1,125 +1,153 @@
 # Lab 9 Stream Data Pipeline I
 
-- Installing Softwares
-- Scenario: Streaming audio \
-    Stream in audio, process and save the data for reporting.
+- Install software
+- Scenario: Streaming audio
+  Stream audio from a local device, process it, and save the data for reporting.
 
-Create a new jupyter notebook file "stream_data_pipeline_1.ipynb".
-
+Create a new Jupyter notebook file named `stream_data_pipeline_1.ipynb`.
 
 ```python
 import os
 home_directory = os.path.expanduser("~")
-os.chdir(home_directory+'/Documents/projects/ee3801')
+os.chdir(os.path.join(home_directory, 'Documents', 'projects', 'ee3801'))
 ```
 
-# 1. Install kafka 
+# 1. Install Kafka
 
-1. SSH into server. Go to the directory and create the following directories.
+1. SSH into the EC2 instance, change to the project directory, and create the Kafka folder.
 
-    ```$ cd ~/Documents/projects/ee3801```\
-    ```$ ssh -i "MyKeyPair.pem" ec2-user@<ip_address>```\
-    ```$ mkdir -p ./dev_kafka/data```\
-    ```$ cd ~/dev_kafka```
+    ```bash
+    cd ~/Documents/projects/ee3801
 
-2. Download <a href="https://github.com/apache/kafka/tree/trunk/docker/examples/docker-compose-files/cluster/isolated/plaintext">docker-compose.yml</a> and save in the ```dev_kafka``` folder. 
-
-    ```curl -LfO 'https://github.com/apache/kafka/raw/refs/heads/trunk/docker/examples/docker-compose-files/cluster/isolated/plaintext/docker-compose.yml'```
-
-3. Open the docker-compose.yml and observe that there are 3 kafka broker with 3 isolated controllers. 
-
-    ```vi docker-compose.yml```
-
-4. Replace the localhost to ```${PUBLIC_IP_ADDRESS}``` in the docker-compose.yml file and save the file.
-
-5. Run the docker command in command line or terminal. Ctrl-C to terminate in the terminal and start the dev_kafka docker containers (controllers first) in docker dashboard. 
-
-    ```IMAGE=apache/kafka:latest PUBLIC_IP_ADDRESS=<ip_address> docker-compose up```
-
-
-
-# 2. Sending messages between producer and consumers in Kafka
-
-1. Access docker container kafka-1 and create a new topic.
-
-    ```docker exec -it kafka-1 /bin/bash```
-
-    - Create a new topic \
-    ```/opt/kafka/bin/kafka-topics.sh --create --topic dataengineering --replication-factor 2 --bootstrap-server localhost:9092```
-
-        <img src="image/week9_image1.png" width="60%">
-
-    - Show details of the new topic created. Then exit the terminal.\
-    ```/opt/kafka/bin/kafka-topics.sh --describe --topic dataengineering --bootstrap-server localhost:9092```
-
-        <img src="image/week9_image2.png" width="80%">
-
-    - Run an instance in this terminal\
-    ```docker exec -it kafka-1 /opt/kafka/bin/kafka-console-producer.sh --topic dataengineering --bootstrap-server localhost:9092```
-
-2. Open a new terminal. Access the docker container kafka-1.
-
-    - Listen to the messages send by the producer by starting a consumer. \
-    ```docker exec -it kafka-1 /opt/kafka/bin/kafka-console-consumer.sh --topic dataengineering --from-beginning --bootstrap-server localhost:9092```
-
-3. In the producer terminal, enter producer messages. You will see these messages appearing in the consumer terminal. 
-
-    ```This is my first event```
+    ssh -i "MyKeyPair.pem" ec2-user@<ip_address>
     
-    ```This is my second event```
+    mkdir -p ./dev_kafka/data
+    
+    cd ~/dev_kafka
+    ```
+
+2. On the EC2 instance, download the Kafka Docker Compose file into the `dev_kafka` folder.
+
+    ```bash
+    curl -LfO 'https://github.com/apache/kafka/raw/refs/heads/trunk/docker/examples/docker-compose-files/cluster/isolated/plaintext/docker-compose.yml'
+    ```
+
+3. On the EC2 instance, open `docker-compose.yml` and confirm that it creates three Kafka brokers and three isolated controllers.
+
+    ```bash
+    vi docker-compose.yml
+    ```
+
+4. Replace `localhost` with `${PUBLIC_IP_ADDRESS}` in `docker-compose.yml`, then save the file using command `:wq`.
+
+5. On the EC2 instance, replace the <ip_address> with EC2 instance ip address and start Kafka with Docker Compose with the command below. Press Ctrl+C to stop the foreground process and and start the dev_kafka docker containers (controllers first) in docker dashboard. 
+
+    ```bash
+    sudo service docker start
+
+    IMAGE=apache/kafka:latest PUBLIC_IP_ADDRESS=<ip_address> docker-compose up
+    ```
+
+
+
+# 2. Sending messages between producer and consumer in Kafka
+
+1. On the EC2 instance, access the `kafka-1` docker container and create a new topic. This will be the producer terminal.
+
+    ```bash
+    # start all kafka containers
+    docker start dev_kafka-controller-1-1 dev_kafka-controller-2-1 dev_kafka-controller-3-1 kafka-1 kafka-2 kafka-3
+    # access kafka-1
+    docker exec -it kafka-1 /bin/bash
+    ```
+
+    Create the topic:
+
+    ```bash
+    /opt/kafka/bin/kafka-topics.sh --create --topic dataengineering --replication-factor 2 --bootstrap-server localhost:9092
+    ```
+
+    <img src="image/week9_image1.png" width="60%">
+
+    Show details of the new topic created. Then exit the terminal.
+    ```bash
+    # show created topic
+    /opt/kafka/bin/kafka-topics.sh --describe --topic dataengineering --bootstrap-server localhost:9092
+    # exit terminal
+    exit
+    ```
+
+    <img src="image/week9_image2.png" width="80%">
+
+    Start the producer in this terminal:
+
+    ```bash
+    docker exec -it kafka-1 /opt/kafka/bin/kafka-console-producer.sh --topic dataengineering --bootstrap-server localhost:9092
+    ```
+
+2. Open a second terminal on your local machine and SSH into the EC2 instance again. Then attach to the `kafka-1` container for the consumer.
+
+    Start the consumer to listen for producer messages:
+
+    ```bash
+    docker exec -it kafka-1 /opt/kafka/bin/kafka-console-consumer.sh --topic dataengineering --from-beginning --bootstrap-server localhost:9092
+    ```
+
+3. In the producer terminal, type messages. The consumer terminal should display them.
+
+    Example messages:
+
+    ```text
+    This is my first event
+    This is my second event
+    ```
 
     <img src="image/week9_image3.png" width="80%">
 
+    Ctr+C to exit the producer and consumer processes.
 
+4. After completing the steps above, answer the following questions in your notebook:
 
-4. After successfully performing the tasks above, what do you think is Apache Kafka? (Enter and submit your answer in the notebook.)
+    - What is Apache Kafka?
+    - What are some example use cases for Apache Kafka?
 
+# 3. Scenario: Streaming audio
 
-
-5. What are the possible examples of using Apache Kafka? (Enter and submit your answer in the notebook.)
-
-
-
-# 3. Scenario: Streaming audio 
-
-The company would like to build an in-house automatic speech transcribing tool. The system stream in audio from your device, transcribe it using Open AI's whisper model and save the transcribed text for reporting. 
+The company wants to build an in-house automatic speech transcription tool. The system should stream audio from your device, transcribe it using OpenAI's Whisper model, and save the transcribed text for reporting.
 
 # 3.1 Stream audio data auto-transcription
 
-    The latency of a single stream of audio data auto-transcription. Take note of the time taken to read, write and transcribe the audio.
-    
-    
-    ```python
-    # # install python packages
-    # !pip install --upgrade pip
-    
-    # # for mac users
-    # !brew install portaudio 
-    # !python3 -m pip install pyaudio
-    # !python3 -m pip install scipy
-    
-    # # for mac silicon users # ensure brew is in path /opt/homebrew if not uninstall homebrew and install latest homebrew # /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"
-    # !arch -arm64 /opt/homebrew/bin/brew install portaudio
-    # !python3 -m pip cache purge
-    # !python3 -m pip install pyaudio --global-option="build_ext" --global-option="-I/opt/homebrew/include" --global-option="-L/opt/homebrew/lib"
-    # !python3 -m pip install scipy
-    
-    # # # for windows users
-    # !python3 -m pip install sounddevice
-    # !python3 -m pip install pyaudio
-    # # for GNU/Linux users
-    # !sudo apt install python3-pyaudio
-    # !python3 -m pip install scipy
-    
-    
-    
-    
-    ```
+Measure the latency of a single audio stream transcription. Record how long it takes to read, write, and transcribe the audio. 
 
-# 3.1.1 Stream in audio 
+In Visual Studio Code stream_data_pipeline_1.ipynb file, install the appropriate python packages into the local machine.
 
-1. Check default audio input
+```python
+# Install required Python packages
+# !pip install --upgrade pip
 
+# For macOS users
+# !brew install portaudio
+# !python3 -m pip install pyaudio
+# !python3 -m pip install scipy
+
+# For Apple Silicon users
+# !arch -arm64 /opt/homebrew/bin/brew install portaudio
+# !python3 -m pip cache purge
+# !python3 -m pip install pyaudio 
+# !python3 -m pip install scipy
+
+# For Windows users
+# !python3 -m pip install sounddevice
+# !python3 -m pip install pyaudio
+
+# For Linux/WSL2 users
+# !sudo apt install python3-pyaudio
+# !python3 -m pip install scipy
+```
+
+# 3.1.1 Stream audio input
+
+1. Check the default audio input device.
 
     ```python
     import pyaudio
@@ -148,8 +176,7 @@ The company would like to build an in-house automatic speech transcribing tool. 
         p.terminate()
     ```
 
-2. List down all audio in your machine.
-
+2. List all audio devices on your machine.
 
     ```python
     # Testing audio setup in this device
@@ -162,78 +189,72 @@ The company would like to build an in-house automatic speech transcribing tool. 
     audio.terminate()
     ```
 
-3. Choose the input and output audio in your machine. Take note of the index number of the audio input or output.
+3. Choose the input and output devices, and note their index numbers. 
+
+    This is to determine which input audio and output audio you will use. Explore and find the right index to use for input and output in your device.
 
 
     ```python
-    # This is to determine which input audio and output audio you will use.
-    # Explore and find the right index to use for input and output in your device.
+    import pyaudio
+
     audio = pyaudio.PyAudio()
-    input = audio.get_default_input_device_info()
-    print("Choosing my input audio: 'name':",input["name"],",'maxInputChannels':",input["maxInputChannels"],",'defaultSampleRate':",input["defaultSampleRate"])
-    print("Choosing my output audio:",audio.get_device_info_by_index(2))
+    input_device = audio.get_default_input_device_info()
+    print("Selected input audio:", input_device["name"])
+    print("  maxInputChannels:", input_device["maxInputChannels"])
+    print("  defaultSampleRate:", input_device["defaultSampleRate"])
+    print("Selected output audio:", audio.get_device_info_by_index(2))
     audio.terminate()
     ```
-    
-    
+
+    If no audio devices are listed, check your drivers and permissions.
+
+    - macOS: Make sure the app has microphone permission in System Preferences -> Security & Privacy.
+    - Windows: Confirm the microphone is enabled in Privacy Settings.
     ```python
-    # If no devices are listed, the issue could be with your audio drivers or system permissions.
-    
-    # for mac
-    # Ensure that the app has permission to use the microphone in "System Preferences" -> "Security & Privacy."
-    
-    # for windows
     import sounddevice as sd
     print(sd.query_devices())
-    # Check that your microphone is enabled in the "Privacy Settings."
-    
-    # for linux
-    # Verify that the correct ALSA/PulseAudio settings are in place.
     ```
+    - Linux: Verify ALSA/PulseAudio settings.
 
 # 3.1.2 Load whisper model once
 
 1. Install OpenAI whisper
 
 
-    ```python
-    # !python -m pip install -U jupyter
-    # !python -m pip install -U ipywidgets
-    # !python -m pip install -U openai-whisper
+    ```bash
+    !python -m pip install -U jupyter
+    !python -m pip install -U ipywidgets
+    !python -m pip install -U openai-whisper
     ```
     
-    
-    ```python
-    # # python 3.11.5
-    # !python -m pip install -U torch
-    # !python -m pip uninstall numpy -y
-    # !python -m pip install numpy==1.26.4
-    # # restart kernel
+    ```bash
+    # python 3.11.5
+    python -m pip install -U torch
+    python -m pip uninstall numpy -y
+    python -m pip install numpy==1.26.4
+    # restart kernel
     ```
 
 2. Load whisper model to transcribe audio to text.
-
 
     ```python
     import whisper
     model = whisper.load_model("medium.en") # tiny.en (if disk not enough space)
     ```
 
-# 3.1.3 Read from the script as you are recording
+# 3.1.3 Read the script while recording
 
-Given the script below. You can read out the script as you are recording the audio.
+Read the passage below while recording audio. This helps you test transcription quality.
 
-
-* Producers are fairly straightforward – they send messages to a topic and partition, maybe request an acknowledgment, retry if a message fails – or not – and continue. Consumers, however, can be a little more complicated.
-
-* Consumers read messages from a topic. Consumers run in a poll loop that runs indefinitely waiting for messages. Consumers can read from the beginning – they will start at the first message in the topic and read the entire history. Once caught up, the consumer will wait for new messages.
-
+- Producers are fairly straightforward: they send messages to a topic and partition, may request acknowledgments, may retry if a message fails, and then continue.
+- Consumers are more complex: they read messages from a topic, run in a poll loop that waits for new messages, and can start from the beginning of the topic to read the entire history. Once caught up, the consumer waits for new messages.
 
 # 3.1.4 Capture one sentence
-Write Audio to file, Read Aduio from file, Transcribe, Translate
+Capture a short audio sentence, write audio to a file, read audio from the file, transcribe it, and optionally translate it.
 
 ## Using pyaudio
 
+Use this section if `pyaudio` is installed on your system.
 
 ```python
 # using pyaudio
@@ -250,13 +271,13 @@ def record_audio():
     CHUNK = 1024
     RECORD_SECONDS = 5
     WAVE_OUTPUT_FILENAME = "output.wav"
-    # DEVICE_ID = 2 # system microphone # you can get a specific audio if required. audio.get_device_info_by_index(DEVICE_ID)
+    # DEVICE_ID = 2  # Use a specific microphone if required.
 
     audio = pyaudio.PyAudio()
-    input = audio.get_default_input_device_info()
-    RATE = int(input['defaultSampleRate'])
-    CHANNELS = int(input['maxInputChannels'])
-    INDEX = int(input['index'])
+    input_device = audio.get_default_input_device_info()
+    RATE = int(input_device['defaultSampleRate'])
+    CHANNELS = int(input_device['maxInputChannels'])
+    INDEX = int(input_device['index'])
     
     stream = audio.open(
         format=FORMAT,
@@ -284,18 +305,19 @@ def record_audio():
     waveFile.writeframes(b''.join(frames))
     waveFile.close()
 
-# capture audio once
+# Capture audio once
 record_audio()
 
-audio = whisper.pad_or_trim(whisper.load_audio(WAVE_OUTPUT_FILENAME)) #"output_1.wav"
+audio = whisper.pad_or_trim(whisper.load_audio(WAVE_OUTPUT_FILENAME))  # "output.wav"
 print(whisper.transcribe(model, audio, fp16=False)["text"])
 ```
 
 ## Using sounddevice
 
+Use this section if `sounddevice` is installed or if `pyaudio` is not available.
 
 ```python
-import sounddevice as sd # for windows
+import sounddevice as sd  # for Windows or if `sounddevice` is preferred
 
 # Get default input device info
 device_info = sd.query_devices(kind='input')
@@ -311,70 +333,56 @@ print(f"Sample Rate: {sample_rate} Hz")
 print(f"Channels: {channels}")
 ```
 
-
 ```python
 import wave
 import numpy as np
-import sounddevice as sd # for windows
+import sounddevice as sd  # for Windows or if `sounddevice` is preferred
 
 WAVE_OUTPUT_FILENAME = "output.wav"
 
 def record_audio():
-    FORMAT = pyaudio.paInt16
     CHUNK = 1024
     RECORD_SECONDS = 5
     WAVE_OUTPUT_FILENAME = "output.wav"
     
     print("Recording...")
     device_info = sd.query_devices(kind='input')
-    # Sample rate (as float)
     RATE = int(device_info['default_samplerate'])
-    # Maximum number of input channels
     CHANNELS = int(device_info['max_input_channels'])
 
     audio = sd.rec(int(RECORD_SECONDS * RATE), samplerate=RATE, channels=CHANNELS, dtype='int16') 
-    
     sd.wait()
     print("Recording complete.")
 
-    # Save to WAV file
     with wave.open(WAVE_OUTPUT_FILENAME, 'wb') as wf:
         wf.setnchannels(CHANNELS)
-        wf.setsampwidth(2)  # 2 bytes for 'int16'
+        wf.setsampwidth(2)  # 2 bytes for int16
         wf.setframerate(RATE)
         wf.writeframes(audio.tobytes())
 
-# capture audio once
+# Capture audio once
 record_audio()
 
-audio = whisper.pad_or_trim(whisper.load_audio(WAVE_OUTPUT_FILENAME)) #"output_1.wav"
+audio = whisper.pad_or_trim(whisper.load_audio(WAVE_OUTPUT_FILENAME))  # "output.wav"
 print(whisper.transcribe(model, audio, fp16=False)["text"])
 ```
 
-
 ```python
-# # if you encounter error, "No such file or directory: 'ffmpeg'"
-# # for mac
+# If you see the error "No such file or directory: 'ffmpeg'", install ffmpeg for your platform.
+# macOS:
 # !brew install ffmpeg
 
-# # "audio = whisper.pad_or_trim(whisper.load_audio("output.wav"))"
-# # "[FileNotFoundError: [WinError 2] The system cannot find the file specified]"
-# # for windows
+# Windows (conda):
 # conda install -c conda-forge ffmpeg
-# # Ensure that Whisper and any necessary dependencies, such as `ffmpeg` and `pyaudio`, are installed.
-# !conda install -c conda-forge whisper
-# !conda install -c conda-forge pyaudio
 
-# # for linux (debian/ubuntu-based)
-# !sudo apt update
-# !sudo apt install ffmpeg
-
+# Linux (Debian/Ubuntu):
+# sudo apt update
+# sudo apt install ffmpeg
 ```
 
 # 3.1.5 Capture a paragraph
 
-What did you observe from the recordings below? Submit your findings.
-
+Record an audio for 1 minute, save the audio to a file, read audio, transcribe and display the transcription. Take note of the time taken.
 
 ```python
 from datetime import datetime
@@ -384,37 +392,34 @@ start_time = datetime.now()
 
 try:
     while True:
-        before_time=datetime.now()
+        before_time = datetime.now()
         record_audio()
-        before_load_time=datetime.now()
-        # read wav file into whisper file
-        audio = whisper.pad_or_trim(whisper.load_audio(WAVE_OUTPUT_FILENAME)) 
-        before_transcribe_time=datetime.now()
-        print("transcribe:",whisper.transcribe(model, audio, fp16=False)["text"])
-        before_transcribe_translate_time=datetime.now()
-        print("transcribe and translate:",whisper.transcribe(model, audio, task="translate", fp16=False)["text"])
-        after_transcribe_translate_time = datetime.now()
-        print("record time taken:",before_load_time-before_time)
-        print("load record time taken:",before_transcribe_time-before_load_time)
-        print("transcribe time taken:",before_transcribe_translate_time-before_transcribe_time)
-        print("transcribe translate time taken:",after_transcribe_translate_time-before_transcribe_translate_time)
-        print("total time taken:",after_transcribe_translate_time-before_time)
+        before_load_time = datetime.now()
 
-        if (datetime.now() - start_time).seconds > 60: #exit program after 1min
-            # stream.stop_stream()
-            # stream.close()
-            # audio.terminate()
-            print("* Exit program after 1min *")
+        audio = whisper.pad_or_trim(whisper.load_audio(WAVE_OUTPUT_FILENAME))
+        before_transcribe_time = datetime.now()
+
+        print("transcribe:", whisper.transcribe(model, audio, fp16=False)["text"])
+        before_transcribe_translate_time = datetime.now()
+        print("transcribe and translate:", whisper.transcribe(model, audio, task="translate", fp16=False)["text"])
+        after_transcribe_translate_time = datetime.now()
+
+        print("record time taken:", before_load_time - before_time)
+        print("load record time taken:", before_transcribe_time - before_load_time)
+        print("transcribe time taken:", before_transcribe_translate_time - before_transcribe_time)
+        print("transcribe translate time taken:", after_transcribe_translate_time - before_transcribe_translate_time)
+        print("total time taken:", after_transcribe_translate_time - before_time)
+
+        if (datetime.now() - start_time).seconds > 60:
+            print("* Exit program after 1 min *")
             break
-except KeyboardInterrupt as kie:
+except KeyboardInterrupt:
     print("Program terminated by user")
-exit
 ```
 
-# 3.1.6 Record audio, Transcribe, Translate
+# 3.1.6 Record audio, transcribe, and translate
 
-What did you observe from the recordings below? Submit your findings.
-
+Record audio continuously for 1 minute, directly transcribe it and observe the results. Observe the results and answer the question. Which method is faster 3.1.5 or 3.1.6? What type of applications do you think is more useful for 3.1.5 and 3.1.6? Submit your findings.
 
 ```python
 import pyaudio
@@ -428,13 +433,12 @@ from scipy.signal import resample
 FORMAT = pyaudio.paInt16
 CHUNK = 1024
 RECORD_SECONDS = 5
-# DEVICE_ID = 1
 
 audio = pyaudio.PyAudio()
-input = audio.get_default_input_device_info()
-RATE = int(input['defaultSampleRate'])
-CHANNELS = int(input['maxInputChannels'])
-INDEX = int(input['index'])
+input_device = audio.get_default_input_device_info()
+RATE = int(input_device['defaultSampleRate'])
+CHANNELS = int(input_device['maxInputChannels'])
+INDEX = int(input_device['index'])
 
 stream = audio.open(
     format=FORMAT,
@@ -452,67 +456,59 @@ try:
         before_time = datetime.now()
         frames = []
         for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
-            data = stream.read(CHUNK, exception_on_overflow = False)
+            data = stream.read(CHUNK, exception_on_overflow=False)
             frames.append(data)
         raw_data = b''.join(frames)
 
-        # before_buffer_time = datetime.now()
         audio_data = np.frombuffer(raw_data, dtype=np.int16).astype(np.float32) / 32768.0
         if CHANNELS > 1:
             audio_data = audio_data.reshape(-1, CHANNELS).mean(axis=1)
-        # before_trim_time = datetime.now()
         audio_data = whisper.pad_or_trim(audio_data)
+
         before_transcribe_time = datetime.now()
-        sample_rate = int(len(audio_data)*16000/RATE)
-        audio_data = resample(audio_data,num = sample_rate)
+        sample_rate = int(len(audio_data) * 16000 / RATE)
+        audio_data = resample(audio_data, num=sample_rate)
         print(whisper.transcribe(model, audio_data, fp16=False)["text"])
         before_transcribe_translate_time = datetime.now()
-        # print(whisper.transcribe(model, audio_data, task="translate", fp16=False)["text"])
-        # after_transcribe_translate_time = datetime.now()
 
-        print("read time taken:",before_transcribe_time-before_time)
-        # print("buffer time taken:",before_trim_time-before_buffer_time)
-        # print("trim time taken:",before_transcribe_time-before_trim_time)
-        print("transcribe time taken:",before_transcribe_translate_time-before_transcribe_time)
-        # print("transcribe translate time taken:",after_transcribe_translate_time-before_transcribe_translate_time)
+        print("read time taken:", before_transcribe_time - before_time)
+        print("transcribe time taken:", before_transcribe_translate_time - before_transcribe_time)
 
-        if (datetime.now() - start_time).seconds > 60: #exit program after 1min
+        if (datetime.now() - start_time).seconds > 60:
             stream.stop_stream()
             stream.close()
             audio.terminate()
-            print("* Exit program after 1min *")
+            print("* Exit program after 1 min *")
             break
-
-except KeyboardInterrupt as kie:
+except KeyboardInterrupt:
     print("* Program terminated by user *")
     stream.stop_stream()
     stream.close()
     audio.terminate()
 except Exception as e:
     print("Exception:", e)
-    if stream!=None:
+    if stream is not None:
         stream.stop_stream()
         stream.close()
         audio.terminate()
-# exit
-
 ```
 
 # Conclusion
 
-1. You have successfully streamed audio data from your device and saved to a file.
-
+1. You have successfully streamed audio data from your device and saved it to a file.
 2. You have successfully streamed audio data and directly transcribed the audio to text.
 
-<b>Questions to ponder</b>
-1. What do you think is the difference between batch and stream data pipeline?
-2. What applications need to use the stream data pipeline?
+**Questions to ponder**
+
+1. What do you think is the difference between a batch data pipeline and a stream data pipeline?
+2. What applications need to use a stream data pipeline?
+<br>
 
 # Submissions next Wed 9pm (22 Oct 2025)  
 
-Submit your ipynb as a pdf. Save your ipynb as a html file, open in browser and print as a pdf. Include in your submission:
+Submit your notebook as a PDF. Save your notebook as HTML, open it in a browser, and print it to PDF. Include in your submission:
 
-    Section 2 Points 4 and 5. 
+    Section 2 Step 4. 
 
     Section 3.1.5.
     
