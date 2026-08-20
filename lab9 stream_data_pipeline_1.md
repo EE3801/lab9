@@ -19,8 +19,11 @@ os.chdir(os.path.join(home_directory, 'Documents', 'projects', 'ee3801'))
     ```bash
     cd ~/Documents/projects/ee3801
 
+    # for MacOS
     ssh -i "MyKeyPair.pem" ec2-user@<ip_address>
-    
+    # for Windows
+    ssh -i ~/"MyKeyPair.pem" ec2-user@<ip_address>
+
     mkdir -p ./dev_kafka/data
     
     cd ~/dev_kafka
@@ -44,8 +47,16 @@ os.chdir(os.path.join(home_directory, 'Documents', 'projects', 'ee3801'))
 
     ```bash
     sudo service docker start
+    # stop all containers
+    docker stop $(docker ps -q)
 
     IMAGE=apache/kafka:latest PUBLIC_IP_ADDRESS=<ip_address> docker-compose up
+    ```
+    ```bash
+    # Ctrl+C then execute this command
+    # start all kafka containers
+    docker start dev_kafka-controller-1-1 dev_kafka-controller-2-1 dev_kafka-controller-3-1 kafka-1 kafka-2 kafka-3
+    
     ```
 
 
@@ -55,8 +66,6 @@ os.chdir(os.path.join(home_directory, 'Documents', 'projects', 'ee3801'))
 1. On the EC2 instance, access the `kafka-1` docker container and create a new topic. This will be the producer terminal.
 
     ```bash
-    # start all kafka containers
-    docker start dev_kafka-controller-1-1 dev_kafka-controller-2-1 dev_kafka-controller-3-1 kafka-1 kafka-2 kafka-3
     # access kafka-1
     docker exec -it kafka-1 /bin/bash
     ```
@@ -90,6 +99,11 @@ os.chdir(os.path.join(home_directory, 'Documents', 'projects', 'ee3801'))
     Start the consumer to listen for producer messages:
 
     ```bash
+    # for MacOS
+    ssh -i "MyKeyPair.pem" ec2-user@<ip_address>
+    # for Windows
+    ssh -i ~/"MyKeyPair.pem" ec2-user@<ip_address>
+    # start the second terminal
     docker exec -it kafka-1 /opt/kafka/bin/kafka-console-consumer.sh --topic dataengineering --from-beginning --bootstrap-server localhost:9092
     ```
 
@@ -105,6 +119,8 @@ os.chdir(os.path.join(home_directory, 'Documents', 'projects', 'ee3801'))
     <img src="image/week9_image3.png" width="80%">
 
     Ctr+C to exit the producer and consumer processes.
+
+    Stop the EC2 instance in AWS Console.
 
 4. After completing the steps above, answer the following questions in your notebook:
 
@@ -139,10 +155,15 @@ In Visual Studio Code stream_data_pipeline_1.ipynb file, install the appropriate
 # For Windows users
 # !python3 -m pip install sounddevice
 # !python3 -m pip install pyaudio
-
-# For Linux/WSL2 users
-# !sudo apt install python3-pyaudio
 # !python3 -m pip install scipy
+
+# For Linux/WSL2 users, install in the local machine terminal
+# !sudo apt update
+# !sudo apt install -y build-essential python3-pyaudio portaudio19-dev pulseaudio python3-dev
+# !sudo apt install alsa-utils
+# !python3 -m pip install scipy
+# !python3 -m pip install sounddevice
+# !python3 -m pip install --no-cache-dir pyaudio
 ```
 
 # 3.1.1 Stream audio input
@@ -211,6 +232,7 @@ In Visual Studio Code stream_data_pipeline_1.ipynb file, install the appropriate
     - macOS: Make sure the app has microphone permission in System Preferences -> Security & Privacy.
     - Windows: Confirm the microphone is enabled in Privacy Settings.
     ```python
+    # for Linux/WSL2
     import sounddevice as sd
     print(sd.query_devices())
     ```
@@ -218,13 +240,18 @@ In Visual Studio Code stream_data_pipeline_1.ipynb file, install the appropriate
 
 # 3.1.2 Load whisper model once
 
-1. Install OpenAI whisper
+1. Install OpenAI whisper\
+    Refer to https://pypi.org/project/openai-whisper/ for more installation instructions.
 
 
     ```bash
-    !python -m pip install -U jupyter
-    !python -m pip install -U ipywidgets
-    !python -m pip install -U openai-whisper
+    !python3 -m pip install -U jupyter
+    !python3 -m pip install -U ipywidgets
+    !python3 -m pip install -U openai-whisper
+    # if you encounter errors, /tmp file might have limited storage size
+    !python -m pip cache purge
+    !mkdir -p ~/pip_tmp
+    !TMPDIR=~/pip_tmp python -m pip install --no-cache-dir openai-whisper
     ```
     
     ```bash
@@ -252,7 +279,27 @@ Read the passage below while recording audio. This helps you test transcription 
 # 3.1.4 Capture one sentence
 Capture a short audio sentence, write audio to a file, read audio from the file, transcribe it, and optionally translate it.
 
-## Using pyaudio
+- Install ffmpeg. Click <a href="https://ffmpeg.org/ffmpeg.html">here</a> to read more about ffmpeg.
+
+```python
+# If you see the error "No such file or directory: 'ffmpeg'", install ffmpeg for your platform.
+# macOS:
+# !brew install ffmpeg
+
+# Windows (conda):
+# conda install -c conda-forge ffmpeg
+# # or
+# Get-ExecutionPolicy
+# Set-ExecutionPolicy Bypass -Scope Process
+# Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bot 3072; iex ((New-Object System.NetWebClient).DownloadString('https://chocolatey.org/install.ps1'))
+# choco install ffmpeg -y
+
+# Linux (Debian/Ubuntu):
+# sudo apt update
+# sudo apt install ffmpeg
+```
+
+## Using pyaudio (MacOS)
 
 Use this section if `pyaudio` is installed on your system.
 
@@ -312,7 +359,7 @@ audio = whisper.pad_or_trim(whisper.load_audio(WAVE_OUTPUT_FILENAME))  # "output
 print(whisper.transcribe(model, audio, fp16=False)["text"])
 ```
 
-## Using sounddevice
+## Using sounddevice (Windows)
 
 Use this section if `sounddevice` is installed or if `pyaudio` is not available.
 
@@ -363,22 +410,10 @@ def record_audio():
 # Capture audio once
 record_audio()
 
-audio = whisper.pad_or_trim(whisper.load_audio(WAVE_OUTPUT_FILENAME))  # "output.wav"
-print(whisper.transcribe(model, audio, fp16=False)["text"])
+read_audio = whisper.pad_or_trim(whisper.load_audio(WAVE_OUTPUT_FILENAME))  # "output.wav"
+print(whisper.transcribe(model, read_audio, fp16=False)["text"])
 ```
 
-```python
-# If you see the error "No such file or directory: 'ffmpeg'", install ffmpeg for your platform.
-# macOS:
-# !brew install ffmpeg
-
-# Windows (conda):
-# conda install -c conda-forge ffmpeg
-
-# Linux (Debian/Ubuntu):
-# sudo apt update
-# sudo apt install ffmpeg
-```
 
 # 3.1.5 Capture a paragraph
 
@@ -421,6 +456,10 @@ except KeyboardInterrupt:
 
 Record audio continuously for 1 minute, directly transcribe it and observe the results. Observe the results and answer the question. Which method is faster 3.1.5 or 3.1.6? What type of applications do you think is more useful for 3.1.5 and 3.1.6? Submit your findings.
 
+## Using pyaudio (MacOS)
+
+Use this section if `pyaudio` is installed on your system.
+
 ```python
 import pyaudio
 import wave
@@ -430,9 +469,9 @@ import whisper
 import sys
 from scipy.signal import resample
 
-FORMAT = pyaudio.paInt16
-CHUNK = 1024
-RECORD_SECONDS = 5
+FORMAT = pyaudio.paInt16    # Use 16-bit integers for audio resolution
+CHUNK = 1024                # Number of audio frames to read at a single time
+RECORD_SECONDS = 5          # Length of each audio chunk to process
 
 audio = pyaudio.PyAudio()
 input_device = audio.get_default_input_device_info()
@@ -440,6 +479,9 @@ RATE = int(input_device['defaultSampleRate'])
 CHANNELS = int(input_device['maxInputChannels'])
 INDEX = int(input_device['index'])
 
+start_time = datetime.now()
+
+# Open a single persistent connection to the microphone hardware
 stream = audio.open(
     format=FORMAT,
     channels=CHANNELS,
@@ -449,49 +491,134 @@ stream = audio.open(
     input_device_index=INDEX
 )
 
-start_time = datetime.now()
-
 try:
     while True:
         before_time = datetime.now()
         frames = []
+        # Loop enough times to gather exactly 5 seconds of audio data
         for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
+            # Read a raw chunk of audio data from the mic; ignore data overflows if processing is slow
             data = stream.read(CHUNK, exception_on_overflow=False)
             frames.append(data)
+        # Combine the list of smaller binary chunks into one massive byte string
         raw_data = b''.join(frames)
 
+        # Convert raw binary bytes into an array of numbers. 
+        # Divide by 32768.0 to convert 16-bit integers (-32768 to 32767) into decimals between -1.0 and 1.0 (Required by Whisper).
         audio_data = np.frombuffer(raw_data, dtype=np.int16).astype(np.float32) / 32768.0
+
+        # If the microphone records in Stereo/Multi-channel, combine them into Mono
         if CHANNELS > 1:
+            # Reshape flat array into columns per channel, then average the channels together
             audio_data = audio_data.reshape(-1, CHANNELS).mean(axis=1)
-        audio_data = whisper.pad_or_trim(audio_data)
+        
+        target_len = int(len(audio_data) * 16000 / RATE)    # Calculate how many total samples the audio array needs to be when changed to 16,000Hz
+        audio_data = resample(audio_data, num=target_len)   # Downsample the audio array to 16,000Hz (Whisper models are specifically trained on 16kHz audio)
+        audio_data = whisper.pad_or_trim(audio_data)        # Enforce Whisper's strict input rule: pad short audio or cut long audio to exactly 30 seconds
 
         before_transcribe_time = datetime.now()
-        sample_rate = int(len(audio_data) * 16000 / RATE)
-        audio_data = resample(audio_data, num=sample_rate)
-        print(whisper.transcribe(model, audio_data, fp16=False)["text"])
+        print(whisper.transcribe(model, audio_data, fp16=False)["text"]) # Run the audio through the Whisper AI model to extract text (fp16=False forces 32-bit floats for CPU compatibility)
         before_transcribe_translate_time = datetime.now()
 
         print("read time taken:", before_transcribe_time - before_time)
         print("transcribe time taken:", before_transcribe_translate_time - before_transcribe_time)
 
         if (datetime.now() - start_time).seconds > 60:
-            stream.stop_stream()
-            stream.close()
-            audio.terminate()
             print("* Exit program after 1 min *")
             break
 except KeyboardInterrupt:
     print("* Program terminated by user *")
-    stream.stop_stream()
-    stream.close()
-    audio.terminate()
 except Exception as e:
     print("Exception:", e)
+finally:
+    # Safely release the microphone hardware resources back to the operating system
     if stream is not None:
         stream.stop_stream()
         stream.close()
-        audio.terminate()
+    audio.terminate()
 ```
+
+
+## Using sounddevice (Windows)
+
+Use this section if `sounddevice` is installed or if `pyaudio` is not available.
+
+```python
+import sounddevice as sd
+
+import wave
+import numpy as np
+from datetime import datetime
+import whisper
+import sys
+from scipy.signal import resample
+import queue
+
+FORMAT = sd.default.dtype[0]
+RECORD_SECONDS = 5
+
+input_device = sd.query_devices(kind='input')
+RATE = int(input_device['default_samplerate'])
+CHUNK = int(RATE * RECORD_SECONDS)
+CHANNELS = int(input_device['max_input_channels'])
+INDEX = int(input_device['index'])
+
+audio_queue = queue.Queue()
+
+def audio_callback(indata, frames, time, status):
+    if status:
+        print(status, file=sys.stderr)
+    audio_queue.put(indata.copy())
+
+start_time = datetime.now()
+
+# Open a non-blocking stream that continuously captures audio
+stream = sd.InputStream(
+    samplerate = RATE,
+    channels = CHANNELS, 
+    dtype = FORMAT, 
+    device = INDEX,
+    callback = audio_callback,
+    bloacksize = CHUNK
+)
+
+try:
+    with stream: # Automatically starts and cleans up the stream
+        while True:
+            before_time = datetime.now()
+            
+            # Wait until a full 5-second chunk is ready in the queue
+            raw_audio = audio_queue.get()
+
+            # Convert multi-channel (Stereo) to Mono
+            if CHANNELS > 1:
+                audio_data = raw_audio.mean(axis=1)
+            else:
+                audio_data = raw_audio.flatten()
+            # Ensure the data type is float32 (sounddevice usually returns float32 by default)
+            audio_data = audio_data.astype(np.float32)
+
+            target_len = int(len(audio_data) * 16000 / RATE) # Calculate how many total samples the audio array needs to be when changed to 16,000Hz
+            audio_data = resample(audio_data, num=target_len) # Downsample the audio array to 16,000Hz (Whisper models are specifically trained on 16kHz audio)
+            audio_data = whisper.pad_or_trim(audio_data) # Enforce Whisper's strict input rule: pad short audio or cut long audio to exactly 30 seconds
+
+            before_transcribe_time = datetime.now()
+            print(whisper.transcribe(model, audio_data, fp16=False)["text"]) # Run the audio through the Whisper AI model to extract text (fp16=False forces 32-bit floats for CPU compatibility)
+            before_transcribe_translate_time = datetime.now()
+
+            print("read time taken:", before_transcribe_time - before_time)
+            print("transcribe time taken:", before_transcribe_translate_time - before_transcribe_time)
+
+            if (datetime.now() - start_time).seconds > 60:
+                print("* Exit program after 1 min *")
+                break
+except KeyboardInterrupt:
+    print("* Program terminated by user *")
+except Exception as e:
+    print("Exception:", e)
+    
+```
+
 
 # Conclusion
 
