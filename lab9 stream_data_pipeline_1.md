@@ -9,7 +9,7 @@
     3. Send messages using Kafka
     
 
-    Next week we will learn to stream and transcribe through Kafka.
+    Next week we will learn to stream audio and transcribe through Kafka.
 ------
 
 Create a new Jupyter notebook file named `stream_data_pipeline_1.ipynb`.
