@@ -474,7 +474,7 @@ Read the passage below while recording audio. This helps you test transcription 
         dtype = FORMAT, 
         device = INDEX,
         callback = audio_callback,
-        bloacksize = CHUNK
+        blocksize = CHUNK
     )
 
     try:
