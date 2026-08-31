@@ -49,14 +49,6 @@ In Visual Studio Code stream_data_pipeline_1.ipynb file, install the appropriate
 # !python3 -m pip install sounddevice
 # !python3 -m pip install pyaudio
 # !python3 -m pip install scipy
-
-# For Linux/WSL2 users, install in the local machine terminal
-# !sudo apt update
-# !sudo apt install -y build-essential python3-pyaudio portaudio19-dev pulseaudio python3-dev
-# !sudo apt install alsa-utils
-# !python3 -m pip install scipy
-# !python3 -m pip install sounddevice
-# !python3 -m pip install --no-cache-dir pyaudio
 ```
 
 # 1.1.1 Stream audio input
@@ -125,7 +117,7 @@ In Visual Studio Code stream_data_pipeline_1.ipynb file, install the appropriate
     - macOS: Make sure the app has microphone permission in System Preferences -> Security & Privacy.
     - Windows: Confirm the microphone is enabled in Privacy Settings.
     ```python
-    # for Linux/WSL2
+    # for Windows
     import sounddevice as sd
     print(sd.query_devices())
     ```
@@ -177,21 +169,18 @@ Read the passage below while recording audio. This helps you test transcription 
 - Install ffmpeg. Click <a href="https://ffmpeg.org/ffmpeg.html">here</a> to read more about ffmpeg.
 
     ```python
-    # If you see the error "No such file or directory: 'ffmpeg'", install ffmpeg for your platform.
-    # macOS:
+    ## If you see the error "No such file or directory: 'ffmpeg'", install ffmpeg for your platform.
+    
+    ## for macOS:
     # !brew install ffmpeg
 
-    # Windows (conda):
+    ## Windows (conda):
     # conda install -c conda-forge ffmpeg
     # # or
     # Get-ExecutionPolicy
     # Set-ExecutionPolicy Bypass -Scope Process
     # Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bot 3072; iex ((New-Object System.NetWebClient).DownloadString('https://chocolatey.org/install.ps1'))
     # choco install ffmpeg -y
-
-    # Linux (Debian/Ubuntu):
-    # sudo apt update
-    # sudo apt install ffmpeg
     ```
 
     ## Using pyaudio (MacOS)
@@ -640,7 +629,7 @@ Read the passage below while recording audio. This helps you test transcription 
 2. What applications need to use a stream data pipeline?
 <br>
 
-# Submissions next Wed 9pm (22 Oct 2025)  
+# Submissions next Wed 9pm (21 Oct)  
 
 Submit your notebook as a PDF. Save your notebook as HTML, open it in a browser, and print it to PDF. Include in your submission:
 
