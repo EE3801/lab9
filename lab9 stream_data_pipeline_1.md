@@ -12,6 +12,8 @@
     Next week we will learn to stream audio and transcribe through Kafka.
 ------
 
+Note: When copying the codes to your notebook, select all and ```Shift+Tab``` to remove leading spaces.
+
 Create a new Jupyter notebook file named `stream_data_pipeline_1.ipynb`.
 
 ```python
