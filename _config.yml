@@ -2,8 +2,6 @@ title: Lab 9
 remote_theme: just-the-docs/just-the-docs
 
 nav_external_links:
-  - title: 1. Install kafka
-    url: lab9%20stream_data_pipeline_1.html#1-install-kafka
   - title: 1. Scenario Streaming audio
     url: lab9%20stream_data_pipeline_1.html#3-scenario-streaming-audio
   - title: 1.1 Stream audio data auto-transcription
@@ -19,11 +17,11 @@ nav_external_links:
   - title: 1.1.5 Capture a paragraph
     url: lab9%20stream_data_pipeline_1.html#115-capture-a-paragraph
   - title: 1.1.6 Record audio, Transcribe, Translate
-    url: lab9%20stream_data_pipeline_1.html#116-record-audio-transcribe-translate
+    url: lab9%20stream_data_pipeline_1.html#116-record-audio-transcribe-and-translate
   - title: 2. Install Kafka
     url: lab9%20stream_data_pipeline_1.html#2-install-kafka
   - title: 3. Sending messages between producer and consumer ub Kafka
-    url: lab9%20stream_data_pipeline_1.html#3-sending-messages-between-producer-and-consumer-ub-kafka
+    url: lab9%20stream_data_pipeline_1.html#3-sending-messages-between-producer-and-consumer-in-kafka
   - title: Conclusion
     url: lab9%20stream_data_pipeline_1.html#conclusion
   - title: Submissions
