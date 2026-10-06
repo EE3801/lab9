@@ -4,24 +4,26 @@ remote_theme: just-the-docs/just-the-docs
 nav_external_links:
   - title: 1. Install kafka
     url: lab9%20stream_data_pipeline_1.html#1-install-kafka
-  - title: 2. Sending messages between producer and consumers in Kafka
-    url: lab9%20stream_data_pipeline_1.html#2-sending-messages-between-producer-and-consumers-in-kafka
-  - title: 3. Scenario Streaming audio
+  - title: 1. Scenario Streaming audio
     url: lab9%20stream_data_pipeline_1.html#3-scenario-streaming-audio
-  - title: 3.1 Stream audio data auto-transcription
-    url: lab9%20stream_data_pipeline_1.html#31-stream-audio-data-auto-transcription
-  - title: 3.1.1 Stream in audio
-    url: lab9%20stream_data_pipeline_1.html#311-stream-in-audio
-  - title: 3.1.2 Load whisper model once
-    url: lab9%20stream_data_pipeline_1.html#312-load-whisper-model-once
-  - title: 3.1.3 Read from the script as you are recording
-    url: lab9%20stream_data_pipeline_1.html#313-read-from-the-script-as-you-are-recording
-  - title: 3.1.4 Capture one sentence
-    url: lab9%20stream_data_pipeline_1.html#314-capture-one-sentence
-  - title: 3.1.5 Capture a paragraph
-    url: lab9%20stream_data_pipeline_1.html#315-capture-a-paragraph
-  - title: 3.1.6 Record audio, Transcribe, Translate
-    url: lab9%20stream_data_pipeline_1.html#316-record-audio-transcribe-translate
+  - title: 1.1 Stream audio data auto-transcription
+    url: lab9%20stream_data_pipeline_1.html#11-stream-audio-data-auto-transcription
+  - title: 1.1.1 Stream in audio
+    url: lab9%20stream_data_pipeline_1.html#111-stream-in-audio
+  - title: 1.1.2 Load whisper model once
+    url: lab9%20stream_data_pipeline_1.html#112-load-whisper-model-once
+  - title: 1.1.3 Read from the script as you are recording
+    url: lab9%20stream_data_pipeline_1.html#113-read-from-the-script-as-you-are-recording
+  - title: 1.1.4 Capture one sentence
+    url: lab9%20stream_data_pipeline_1.html#114-capture-one-sentence
+  - title: 1.1.5 Capture a paragraph
+    url: lab9%20stream_data_pipeline_1.html#115-capture-a-paragraph
+  - title: 1.1.6 Record audio, Transcribe, Translate
+    url: lab9%20stream_data_pipeline_1.html#116-record-audio-transcribe-translate
+  - title: 2. Install Kafka
+    url: lab9%20stream_data_pipeline_1.html#2-install-kafka
+  - title: 3. Sending messages between producer and consumer ub Kafka
+    url: lab9%20stream_data_pipeline_1.html#3-sending-messages-between-producer-and-consumer-ub-kafka
   - title: Conclusion
     url: lab9%20stream_data_pipeline_1.html#conclusion
   - title: Submissions
