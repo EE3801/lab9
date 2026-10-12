@@ -20,7 +20,7 @@ nav_external_links:
     url: lab9%20stream_data_pipeline_1.html#116-record-audio-transcribe-and-translate
   - title: 2. Install Kafka
     url: lab9%20stream_data_pipeline_1.html#2-install-kafka
-  - title: 3. Sending messages between producer and consumer ub Kafka
+  - title: 3. Sending messages between producer and consumer in Kafka
     url: lab9%20stream_data_pipeline_1.html#3-sending-messages-between-producer-and-consumer-in-kafka
   - title: Conclusion
     url: lab9%20stream_data_pipeline_1.html#conclusion

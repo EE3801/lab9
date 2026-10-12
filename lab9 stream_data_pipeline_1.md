@@ -141,13 +141,13 @@ In Visual Studio Code stream_data_pipeline_1.ipynb file, install the appropriate
     !TMPDIR=~/pip_tmp python -m pip install --no-cache-dir openai-whisper
     ```
     
-    ```bash
+    <!-- ```bash
     # python 3.11.5
-    python -m pip install -U torch
-    python -m pip uninstall numpy -y
-    python -m pip install numpy==1.26.4
+    !python -m pip install -U torch
+    !python -m pip uninstall numpy -y
+    !python -m pip install numpy==1.26.4
     # restart kernel
-    ```
+    ``` -->
 
 2. Load whisper model to transcribe audio to text.
 
@@ -160,9 +160,11 @@ In Visual Studio Code stream_data_pipeline_1.ipynb file, install the appropriate
 
 Read the passage below while recording audio. This helps you test transcription quality.
 
-    - Producers are fairly straightforward: they send messages to a topic and partition, may request acknowledgments, may retry if a message fails, and then continue.
+```
+- Producers are fairly straightforward: they send messages to a topic and partition, may request acknowledgments, may retry if a message fails, and then continue.
 
-    - Consumers are more complex: they read messages from a topic, run in a poll loop that waits for new messages, and can start from the beginning of the topic to read the entire history. Once caught up, the consumer waits for new messages.
+- Consumers are more complex: they read messages from a topic, run in a poll loop that waits for new messages, and can start from the beginning of the topic to read the entire history. Once caught up, the consumer waits for new messages.
+```
 
 # 1.1.4 Capture one sentence
 
@@ -181,7 +183,7 @@ Read the passage below while recording audio. This helps you test transcription 
     # # or
     # Get-ExecutionPolicy
     # Set-ExecutionPolicy Bypass -Scope Process
-    # Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bot 3072; iex ((New-Object System.NetWebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    # Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     # choco install ffmpeg -y
     ```
 
