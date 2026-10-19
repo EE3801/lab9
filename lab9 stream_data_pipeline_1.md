@@ -184,7 +184,10 @@ Read the passage below while recording audio. This helps you test transcription 
     # Get-ExecutionPolicy
     # Set-ExecutionPolicy Bypass -Scope Process
     # Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    # # Then install ffmpeg
     # choco install ffmpeg -y
+    # # or 
+    # winget install ffmpeg
     ```
 
     ## Using pyaudio (MacOS)
